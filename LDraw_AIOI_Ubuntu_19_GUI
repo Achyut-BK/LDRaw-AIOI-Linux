@@ -1,0 +1,248 @@
+#! /bin/sh 
+#LDraw_AIOI_Ubuntu_19_GUI
+
+#Initializing
+
+enter="
+"
+echo "This has to be run by a sudoer"
+sudo apt-get update -y
+sudo apt-get install -y zenity
+
+#Getting the user
+
+usr=`eval getent passwd {$(awk '/^UID_MIN/ {print $2}' /etc/login.defs)..$(awk '/^UID_MAX/ {print $2}' /etc/login.defs)} | cut -d: -f1`
+username=$(zenity --entry --title " User " --text " Enter Your Username " $usr)
+
+#Getting the password
+
+passwd=$(zenity password --password --title="Sudo Password")
+
+#Initializing
+
+echo $passwd | sudo -S apt-get -y update
+echo $passwd | sudo -S apt-get -y install unzip
+echo $passwd | sudo -S apt-get -y install wget
+
+#intro 
+
+zenity info --info --text="Welcome to the LDraw installer $username" --title=""
+zenity info --info --title="" --text="LDraw is a free CAD-like set of programs that allows a user to create virtual LEGO® like models on your computer. You can use it to document models you have physically built, create building instructions just like LEGO, render 3D photo realistic images of your virtual models and even make animations. The possibilities are endless. Unlike real LEGO bricks - where you are limited by the number of parts and colors - in LDraw nothing is impossible. You have an unlimited supply of virtual bricks in every possible color. Even colors that LEGO has never created!" --width=400
+zenity info --info --title="" --text="At the basic level you need at LEAST two LDraw applications The LDraw Parts Library and an editor" --width=400
+zenity info --info --title="" --text="If you want to create 3D images (renders) of your models that you created in LDraw you will need several more add-ons to LDraw : LDView and POV-Ray" --width=400
+
+#What to install
+
+appslst=$( zenity --list --title="select software to install" --column='Install' --column="App" --column="Description" \
+FALSE "LDraw Parts Library (Official)" "Allows you to download the entire library in $enter one. These parts are tested to be safe $enter and can be used by any and all." \
+FALSE "LGEO accurate POVray Parts" "LGEO is a library of POV-Ray object definitions $enter which describes the parts you need to $enter render the models." \
+FALSE "LDCAD" "LDCad, developed by Roland Melkert, is a $enter multiplatform LDraw editor that lets you edit $enter LDraw model documents in real-time." \
+FALSE "LeoCAD (recommended)" "LeoCAD, developed by Leonardo Zide, is a $enter CAD program for creating virtual $enter LEGO models." \
+FALSE "MLCAD" "MLCad, also known as Mike's LEGO CAD, is an $enter LDraw CAD program developed by $enter Michael Lachmann, which has the ability $enter to create and manage Multi-Part Document $enter files. You can create models with it and $enter add steps to create instructions. $enter (NEEDS WINE)" \
+FALSE "LDView " "LDView, developed by Travis Cobbs, is a $enter real-time 3D viewer for displaying $enter LDraw models using hardware-accellerated $enter 3D graphics." \
+FALSE "LPub3D" "LPub3D is an Open Source WYSIWYG editing $enter application for creating LEGO® $enter style digital building instructions. LPub3D $enter output formats include instruction document, $enter document pages, parts list and export $enter content." \
+FALSE "LDConfig Manager" "LDConfig Manager, developed by Michael $enter Heidemann, allows you to $enter maintain the LDConfig.ldr file with a GUI.$enter (NEEDS WINE)" \
+FALSE "LDFind " "LDFind, developed by Michael Heidemann, $enter should enable you to quickly find $enter the part you are searching for. $enter (NEEDS WINE)" \
+FALSE "MPDCenter" "MPDCenter, developed by Michael Heidemann, $enter helps you to maintain all your $enter MPD files. You can check for OMR conformity $enter (only formal not the layout itself of course). $enter You can extract models with all depending $enter files, hange Author, License, Keywords, $enter Theme, History and Filetype (LDRAW_ORG $enter line) on the fly for all LDR $enter files in the MPD.(NEEDS WINE)" \
+FALSE "L2CU" "Ldraw Linux Command line Utilities is a set $enter of command line utilities developed By $enter Nathanel Titane to enable bulk LDraw $enter model file parsing, editing, exporting, $enter conversion and upload (to Sketchfab.com) $enter without the direct need to use an $enter LDraw CAD editor (though it needs to $enter be installed to enable certain application $enter features). Amongst certain $enter modification options, the user can have parts, $enter colors and/or part's colors, for any ldr and/or $enter mpd file modified to his/her choice, within a $enter selected directory. These tools are especially $enter suited for bulk model file updates, upgrades or $enter modifications: you can attend to deprecated or $enter modified parts in an especially effective $enter manner by: replacing and old part entry by a $enter newer one, replacing a specified color by a $enter differnet one, replacing a specific part's color $enter with a new color $enter (NEEDS LEOCAD AND BLENDER)" \
+FALSE "LDCalc" "LDCalc, developed by Michael Heidemann, is $enter a tool for calculation of angles and line $enter intersections. It is also a converter $enter between mm and LDU and inch and LDU $enter or vice versa.(NEEDS WINE)" \
+FALSE "LD Part Editor " "LDPartEditor, developed by Nils Schmidt, $enter is a platform independent CAD tool for $enter LDraw parts." \
+FALSE "LD Pattern Creator" "LDPatternCreator, developed by Nils Schmidt, $enter is a vector based development tool for $enter textured LDraw parts. $enter (NEEDS WINE)" \
+FALSE "LDStructure" "LDStructure, developed by Michael Heidemann, $enter is a tool for analyzing the ldraw parts $enter library. With LDStructure you will $enter get a tool that tells you which $enter parts are required to show the current part $enter and where the current part is used in. $enter You will get this information $enter within a second or even quicker. So this tool $enter is a needs to have if you $enter are working on parts for the ldraw part library. $enter (NEEDS WINE)" \
+FALSE "PrimGen2" "PrimGen2, developed by Michael Heidemann, based $enter on PrimGen, creates defined primitives $enter that are used in part files. (NEEDS WINE)" \
+FALSE "stl2dat" "stl2dat, developed by Marc Klein, is an utilitary $enter tool to convert .stl files issued from $enter cad software like Solidworks, Autocad, $enter and many others to .dat files $enter for ldraw compatible programs. (NEEDS WINE)" \
+FALSE "Wine " "Wine (originally an acronym for Wine Is Not an $enter Emulator) is a compatibility layer capable of $enter running Windows applications on several $enter POSIX-compliant operating $enter systems, such as Linux, macOS, & BSD. Instead $enter of simulating internal Windows logic $enter like a virtual machine or emulator, Wine $enter translates Windows API calls into POSIX calls $enter on-the-fly, eliminating the $enter performance and memory penalties of other $enter methods and allowing you to cleanly $enter integrate Windows applications into your $enter desktop. This is needed to run certain LDraw $enter applications." \
+FALSE "POV-Ray " "The Persistence of Vision Raytracer is a $enter high-quality, Free Software tool for creating $enter stunning three-dimensional graphics. The $enter source code is available for $enter those wanting to do their own ports. This is $enter needed for rendering" \
+FALSE "Nice Wine" "Nothing screams ‘I am a hold over from your old $enter OS’ like the battleship grey of Windows 95 $enter that wine apps are coated in by default. $enter Make them look part of your $enter desktop by using this program that reconfigures $enter wine to look good. (NEEDS WINE) $enter (NEEDS MANUAL CONFIGURATION, SEE $enter POSTINSTALLGUIDE.TXT)." \
+--checklist --width=675 --height=400 --cancel-label='Quit' --ok-label='Install' )  
+
+#installing
+
+if [ "$?" != 0 ]
+then
+    exit
+fi
+
+echo "installing"
+
+
+if [[ $appslst == *Wine* ]]
+then
+	echo "installing wine"
+	echo $passwd | sudo -S dpkg --add-architecture i386 
+	wget -nc https://dl.winehq.org/wine-builds/winehq.key
+   	echo $passwd | sudo -S apt-key add winehq.key
+   	echo $passwd | sudo -S apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ eoan main' 
+   	echo $passwd | sudo -S apt update
+   	echo $passwd | sudo -S apt install --install-recommends winehq-stable
+
+fi
+
+
+if [[ $appslst == *"LDraw Parts Library (Official)"* ]]
+then
+	echo installing LDraw Parts Library Official
+	wget www.ldraw.org/library/updates/complete.zip
+	unzip complete.zip -d /home/$username/ldraw/partslibrary
+	rm complete.zip
+fi
+
+
+if [[ $appslst == *"LPub3D"* ]]
+then
+	echo installing LPub3D
+	echo $passwd | sudo -S sh -c "echo 'deb http://download.opensuse.org/repositories/home:/trevorsandy/xUbuntu_19.04/ /' > /etc/apt/sources.list.d/home:trevorsandy.list"
+	wget -nv https://download.opensuse.org/repositories/home:trevorsandy/xUbuntu_19.04/Release.key -O Release.key
+	echo $passwd | sudo -S apt-key add - < Release.key
+	echo $passwd | sudo -S apt-get update
+	echo $passwd | sudo -S apt-get -y install lpub3d
+
+fi
+
+
+if [[ $appslst == *"LGEO accurate POVray Parts"* ]]
+then
+	echo installing lgeo
+	git clone https://github.com/jncraton/lgeo.git /home/$username/lgeo
+fi
+
+
+if [[ $appslst == *"MLCAD"* ]]
+then
+	echo installing mlcad
+	wget mlcad.lm-software.com/MLCad_V3.40.zip
+	unzip complete.zip -d /home/$username/ldraw/MLCad
+	cd '/home/$username/ldraw/partslibrary'
+	wine mklist.exe
+	cd 
+	rm MLCad_V3.40.zip
+fi
+
+
+if [[  $appslst == *"LDCAD"* ]]
+then
+	echo installing LDCad
+	wget www.melkert.net/action/download/LDCad-1-6c-Linux.tar.bz2
+	tar -xf LDCad-1-6c-Linux.tar.bz2 -C /home/$username/ldraw/LDCad
+	cd '/home/$username/ldraw/LDCad' 
+	echo $passwd | sudo -S bash setup.sh
+	cd 
+	rm LDCad-1-6c-Linux.tar.bz2
+	
+fi
+
+
+if [[ $appslst == *"LeoCAD (recommended)"* ]]
+then
+	echo installing leocad
+	echo $passwd | sudo -S apt-get install leocad
+	LEOCAD_LIB=/home/$username/ldraw/partslibrary
+fi
+
+
+if [[ $appslst == *"LDView"* ]]
+then
+	echo installing ldview
+	wget https://github.com/tcobbs/ldview/releases/download/v4.3/ldview_4.3-ubuntu17.10_amd64.deb
+	echo $passwd | sudo -S dpkg --install ldview_4.3-ubuntu17.10_amd64.deb
+	rm ldview_4.3-ubuntu17.10_amd64.deb
+fi
+
+
+if [[ $appslst == *"LDConfig Manager"* ]]
+then
+	echo installing ldconfig Manager
+	wget https://ldraw.heidemann.org/uploads/ldconfigmanager/ldconfigmanager.zip
+	unzip ldconfigmanager.zip -d /home/$username/ldraw/ldconfigmanager
+	rm ldconfigmanager.zip
+fi
+
+
+if [[ $appslst == *"LDFind"* ]]
+then
+	echo installing ldfind
+	wget https://ldraw.heidemann.org/index.php?mact=DownCnt,cntnt01,click,0&cntnt01name=ldfind_cnt&cntnt01link=%252Fuploads%252Fldfind%252Fldfind.zip&cntnt01returnid=64
+	unzip ldfind.zip -d /home/$username/ldraw/ldfind
+	rm ldfind.zip
+fi
+
+
+if [[ $appslst == *"MPDCenter"* ]]
+then
+	echo installing mpdcenter
+	wget https://ldraw.heidemann.org/index.php?mact=DownCnt,cntnt01,click,0&cntnt01name=mpdcenter_cnt&cntnt01link=%252Fuploads%252Fmpdcenter%252Fmpdcenter.zip&cntnt01returnid=62
+	unzip mpdcenter.zip -d /home/$username/ldraw/mpdcenter
+	rm mpdcenter.zip
+fi
+
+
+if [[ $appslst == *"L2CU"* ]]
+then
+	echo installing l2cu
+	wget https://github.com/nathaneltitane/ldraw/archive/master.zip
+	unzip master.zip -d /home/$username/ldraw/l2cu
+	cd '/home/$username/ldraw/l2cu'
+	cp l2cu.sh /home/$username/
+	cd
+	echo $passwd | sudo -S sed -i '$ a source ~/l2cu.sh' .bashrc
+	rm master.zip
+fi
+
+
+if [[ $appslst == *"LDCalc"* ]]
+then
+	echo installing ldcalc
+	wget https://ldraw.heidemann.org/index.php?mact=DownCnt,cntnt01,click,0&cntnt01name=ldcalc&cntnt01link=%252Fuploads%252Fldcalc%252Fldcalc.zip&cntnt01returnid=74
+	unzip ldcalc.zip -d /home/$username/ldraw/ldcalc
+	rm ldcalc.zip
+fi
+
+
+if [[ $appslst == *"LD Part Editor"* ]]
+then
+	echo installing ldpe 
+	wget https://github.com/nilsschmidt1337/ldparteditor/releases/download/v0.8.49b-beta/LDPartEditor_linux_x64.zip
+	unzip LDPartEditor_linux_x64.zip -d /home/$username/ldraw/ldparteditor-master
+	cd '/home/$username/ldparteditor-master/scripts/linux'
+	echo $passwd | sudo -S bash update.sh
+	cd
+	rm DPartEditor_linux_x64.zip
+fi
+
+
+if [[ $appslst == *"LD Pattern Creator"* ]]
+then
+	echo installing LDPC
+	wget --trust-server-names https://sourceforge.net/projects/patterncreator/files/setup/LPC_1_7_1_Setup.exe
+	wine LPC_1_7_1_Setup.exe
+	rm LPC_1_7_1_Setup.exe
+fi
+
+
+if [[ $appslst == *"LDStructure"* ]]
+then
+	echo installing ldstructure
+	wget https://ldraw.heidemann.org/index.php?mact=DownCnt,cntnt01,click,0&cntnt01name=ldstructure_cnt&cntnt01link=%252Fuploads%252Fldstructure%252Fldstructure.zip&cntnt01returnid=73
+	unzip ldstructure.zip -d /home/$username/ldraw/ldstructure
+	rm ldstructure.zip
+fi
+
+
+if [[ $appslst == *"PrimGen2"* ]]
+then
+	echo installing primgen2
+	wget https://ldraw.heidemann.org/index.php?mact=DownCnt,cntnt01,click,0&cntnt01name=primgen2&cntnt01link=%252Fuploads%252Fprimgen2%252Fprimgen2.zip&cntnt01returnid=68
+	unzip primgen2.zip -d /home/$username/ldraw/primgen2
+	rm ldstructure.zip
+fi
+
+
+if [[ $appslst == *"stl2dat"* ]]
+then
+	echo installing stl2dat
+	wget marc.klein.free.fr/lego/stl2dat/stl2dat.zip
+	unzip stl2dat.zip -d /home/$username/ldraw/stl2dat
+	rm stl2dat.zip
+fi
+
+zenity --info --text="Finished install successfully"  --ok-label='Finish' --title="Finish"
