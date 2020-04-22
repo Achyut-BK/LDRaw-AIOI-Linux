@@ -1,8 +1,0 @@
-postinstallguide.txt
-
-Most of the programs will ask you to specify LDraw parts library, so just enter .
-/home/<username>/ldraw/partslibrary
-
-Configuring nice wine
-
-type winecfg into your terminal, click the staging tab, and select enable gtk theming
